@@ -47,20 +47,15 @@ public partial class MainWindow : Window
         var bg = dark
             ? System.Windows.Media.Color.FromRgb(0x1F, 0x1F, 0x1F)
             : System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF);
-        var fg = dark
-            ? System.Windows.Media.Color.FromRgb(0xE8, 0xEE, 0xF5)
-            : System.Windows.Media.Color.FromRgb(0x1A, 0x1F, 0x26);
 
         Background = new SolidColorBrush(bg);
 
-        // Colores del menú (barra superior y submenús).
-        Resources["MenuBgBrush"] = new SolidColorBrush(bg);
-        Resources["MenuFgBrush"] = new SolidColorBrush(fg);
-
-        // Forzar el fondo/texto de los submenús emergentes (Popup de MenuItem),
-        // que de lo contrario usan los colores del sistema y quedan ilegibles.
-        Resources[System.Windows.SystemColors.MenuBrushKey] = new SolidColorBrush(bg);
-        Resources[System.Windows.SystemColors.MenuTextBrushKey] = new SolidColorBrush(fg);
+        // Solo el color de las letras de la barra de menú.
+        // Los menús desplegables conservan su estilo nativo.
+        var menuFg = dark
+            ? System.Windows.Media.Color.FromRgb(0xE8, 0xEE, 0xF5)
+            : System.Windows.Media.Color.FromRgb(0x1A, 0x1F, 0x26);
+        Resources["MenuFgBrush"] = new SolidColorBrush(menuFg);
     }
 
     [DllImport("dwmapi.dll")]

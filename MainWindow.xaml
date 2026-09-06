@@ -13,26 +13,18 @@
         WindowStartupLocation="CenterScreen"
         UseLayoutRounding="True">
     <Window.Resources>
-        <SolidColorBrush x:Key="MenuBgBrush" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="MenuFgBrush" Color="#1A1F26"/>
-        <Style TargetType="MenuItem">
-            <Setter Property="Foreground" Value="{DynamicResource MenuFgBrush}"/>
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
     </Window.Resources>
     <DockPanel>
-        <Menu DockPanel.Dock="Top"
-              Background="{DynamicResource MenuBgBrush}"
-              Foreground="{DynamicResource MenuFgBrush}"
-              Padding="6,4">
-            <MenuItem Header="Archivo">
-                <MenuItem Header="Recargar página" Click="Reload_Click"/>
-                <MenuItem Header="Abrir en el navegador" Click="OpenInBrowser_Click"/>
+        <Menu DockPanel.Dock="Top" Background="Transparent" Padding="6,4">
+            <MenuItem Header="Archivo" Foreground="{DynamicResource MenuFgBrush}">
+                <MenuItem Header="Recargar página" Foreground="#1A1F26" Click="Reload_Click"/>
+                <MenuItem Header="Abrir en el navegador" Foreground="#1A1F26" Click="OpenInBrowser_Click"/>
                 <Separator/>
-                <MenuItem Header="Salir" Click="Exit_Click"/>
+                <MenuItem Header="Salir" Foreground="#1A1F26" Click="Exit_Click"/>
             </MenuItem>
-            <MenuItem Header="Ayuda">
-                <MenuItem Header="Acerca de Estalingrado Corp" Click="About_Click"/>
+            <MenuItem Header="Ayuda" Foreground="{DynamicResource MenuFgBrush}">
+                <MenuItem Header="Acerca de Estalingrado Corp" Foreground="#1A1F26" Click="About_Click"/>
             </MenuItem>
         </Menu>
         <wv2:WebView2 x:Name="WebView"
