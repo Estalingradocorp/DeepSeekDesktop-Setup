@@ -12,8 +12,19 @@
         MaxWidth="{x:Static SystemParameters.MaximizedPrimaryScreenWidth}"
         WindowStartupLocation="CenterScreen"
         UseLayoutRounding="True">
+    <Window.Resources>
+        <SolidColorBrush x:Key="MenuBgBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="MenuFgBrush" Color="#1A1F26"/>
+        <Style TargetType="MenuItem">
+            <Setter Property="Foreground" Value="{DynamicResource MenuFgBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+    </Window.Resources>
     <DockPanel>
-        <Menu DockPanel.Dock="Top" Background="Transparent" Padding="6,4">
+        <Menu DockPanel.Dock="Top"
+              Background="{DynamicResource MenuBgBrush}"
+              Foreground="{DynamicResource MenuFgBrush}"
+              Padding="6,4">
             <MenuItem Header="Archivo">
                 <MenuItem Header="Recargar página" Click="Reload_Click"/>
                 <MenuItem Header="Abrir en el navegador" Click="OpenInBrowser_Click"/>
