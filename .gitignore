@@ -1,0 +1,15 @@
+## .NET build artifacts
+bin/
+obj/
+dist/
+*.user
+
+## Installer (por defecto no se sube el binario de 64 MB al repo;
+## se publica como Release de GitHub en su lugar)
+DeepSeekDesktop-Setup.exe
+
+## Local settings
+*.pdb
+.vs/
+*.suo
+*.userprefs
