@@ -159,6 +159,22 @@ public partial class MainWindow : Window
         new AboutWindow { Owner = this }.ShowDialog();
     }
 
+    private void Support_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = @"file:///C:/Users/nicot/OneDrive/Desktop/Empresa/index.html",
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
+            // si falla al abrir la página, no hacer nada
+        }
+    }
+
     private void WebView_InitializationCompleted(object? sender, CoreWebView2InitializationCompletedEventArgs e)
     {
         if (e.IsSuccess && WebView.CoreWebView2 is not null)

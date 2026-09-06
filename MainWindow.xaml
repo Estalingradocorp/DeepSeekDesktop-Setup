@@ -24,6 +24,7 @@
                 <MenuItem Header="Salir" Foreground="#1A1F26" Click="Exit_Click"/>
             </MenuItem>
             <MenuItem Header="Ayuda" Foreground="{DynamicResource MenuFgBrush}">
+                <MenuItem Header="Soporte" Foreground="#1A1F26" Click="Support_Click"/>
                 <MenuItem Header="Acerca de Estalingrado Corp" Foreground="#1A1F26" Click="About_Click"/>
             </MenuItem>
         </Menu>
