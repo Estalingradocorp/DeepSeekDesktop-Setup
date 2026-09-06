@@ -56,6 +56,20 @@ dotnet publish -c Release -r win-x64 --self-contained true `
 > Nota: si Inno Setup se instaló por usuario, ISCC.exe está en
 > `%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe`.
 
+## Publicar una Release (automática)
+
+El repo incluye un flujo de GitHub Actions (`.github/workflows/release.yml`) que
+compila el instalador y lo sube como Release al marcar una versión con una tag `v*`:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+El instalador `DeepSeekDesktop-Setup.exe` quedará adjunto a la Release en
+https://github.com/Estalingradocorp/DeepSeekDesktop-Setup/releases, listo para
+distribuir a los equipos.
+
 ## Estructura del proyecto
 
 ```
