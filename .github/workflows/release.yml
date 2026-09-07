@@ -40,6 +40,36 @@ jobs:
         run: |
           & "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" installer.iss
 
+      # Firma de codigo gratuita para open source via SignPath Foundation.
+      # Requiere que el repo sea publico y tenga licencia OSS (LICENSE).
+      # Configura los secretos/variables en Settings > Secrets y variables > Actions:
+      #   - Secret:  SIGNPATH_API_TOKEN
+      #   - Variable: SIGNPATH_ORG_ID      (slug de la organizacion)
+      #   - Variable: SIGNPATH_PROJECT_ID  (slug del proyecto)
+      #   - Variable: SIGNPATH_POLICY_ID   (slug de la politica de firma)
+      - name: Sign installer with SignPath
+        if: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
+        uses: signpath/submit-signing-request@v1.0.1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORG_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_ID }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_ID }}
+          input-artifact-path: DeepSeekDesktop-Setup.exe
+          output-artifact-path: DeepSeekDesktop-Setup.exe
+          wait-for-processing: true
+
+      - name: Verify installer signature
+        if: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
+        shell: powershell
+        run: |
+          $sig = Get-AuthenticodeSignature -FilePath "DeepSeekDesktop-Setup.exe"
+          Write-Host "Signature status: $($sig.Status)"
+          if ($sig.Status -ne "Valid" -and $sig.Status -ne "UnknownError") {
+            Write-Host "Instalador NO firmado. Comprueba los secretos de SignPath."
+            exit 1
+          }
+
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:

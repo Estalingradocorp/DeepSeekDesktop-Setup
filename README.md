@@ -98,7 +98,14 @@ agalodo/
 
 ## Notas
 
-- El binario no está firmado con certificado de código: Windows SmartScreen puede
+- El binario se firma con **SignPath Foundation** (firma de código gratuita para open source)
+  en el workflow de release. Para que funcione, configura en
+  `Settings → Secrets and variables → Actions`:
+  - Secret `SIGNPATH_API_TOKEN`
+  - Variables `SIGNPATH_ORG_ID`, `SIGNPATH_PROJECT_ID`, `SIGNPATH_POLICY_ID` (slugs)
+  - Si no está configurado, el paso de firma se omite y el instalador se publica sin firmar
+    (SmartScreen puede mostrar advertencia).
+- El binario no está firmado con certificado comercial propio: Windows SmartScreen puede
   mostrar una advertencia al instalarlo. Para evitarla habría que firmarlo con un
   certificado de una CA comercial.
 - DeepSeek es una empresa y servicio independientes; Estalingrado Corp solo
