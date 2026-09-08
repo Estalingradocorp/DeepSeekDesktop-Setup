@@ -15,6 +15,10 @@ public partial class MainWindow : Window
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                      "DeepSeekDesktop", "window.json");
 
+    private const int ApiPort = 8765;
+    private readonly LocalApiServer _api = new();
+    private string _themeOverride = "auto"; // "auto" | "dark" | "light"
+
     public MainWindow()
     {
         InitializeComponent();
@@ -42,7 +46,7 @@ public partial class MainWindow : Window
 
     private void ApplySystemTheme()
     {
-        var dark = IsDarkMode();
+        var dark = ResolveDark();
 
         var bg = dark
             ? System.Windows.Media.Color.FromRgb(0x1F, 0x1F, 0x1F)
@@ -58,6 +62,13 @@ public partial class MainWindow : Window
         Resources["MenuFgBrush"] = new SolidColorBrush(menuFg);
     }
 
+    private bool ResolveDark() => _themeOverride switch
+    {
+        "dark" => true,
+        "light" => false,
+        _ => IsDarkMode()
+    };
+
     [DllImport("dwmapi.dll")]
     private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
@@ -65,10 +76,100 @@ public partial class MainWindow : Window
 
     private void OnSourceInitialized(object? sender, EventArgs e)
     {
-        // Barra de título clara u oscura según el tema del sistema.
-        var dark = IsDarkMode() ? 1 : 0;
+        // Barra de título clara u oscura según el tema.
+        var dark = ResolveDark() ? 1 : 0;
         var hwnd = new WindowInteropHelper(this).Handle;
         DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref dark, sizeof(int));
+
+        StartApi();
+    }
+
+    // --- API local para opencode (solo localhost, sin token) ---
+
+    private void StartApi()
+    {
+        _api.GetStatus = GetStatusAsync;
+        _api.Navigate = NavigateAsync;
+        _api.Reload = ReloadAsync;
+        _api.ExecuteScript = ExecuteScriptAsync;
+        _api.SetTheme = SetThemeAsync;
+
+        try
+        {
+            _api.Start(ApiPort);
+            Title = $"{Title}  ·  API en http://localhost:{ApiPort}";
+        }
+        catch
+        {
+            Title = $"{Title}  ·  (API no disponible en :{ApiPort})";
+        }
+    }
+
+    private Task<object> GetStatusAsync()
+    {
+        return Dispatcher.InvokeAsync(() => (object)new
+        {
+            running = true,
+            url = WebView.Source?.AbsoluteUri,
+            theme = ResolveDark() ? "dark" : "light",
+            themeOverride = _themeOverride,
+            port = ApiPort
+        }).Task;
+    }
+
+    private Task NavigateAsync(string url)
+    {
+        return Dispatcher.InvokeAsync(() =>
+        {
+            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                WebView.Source = uri;
+        }).Task;
+    }
+
+    private Task ReloadAsync()
+    {
+        return Dispatcher.InvokeAsync(() =>
+        {
+            if (WebView.CoreWebView2 is not null)
+                WebView.CoreWebView2.Reload();
+            else
+                WebView.Source = new Uri("https://chat.deepseek.com/");
+        }).Task;
+    }
+
+    private Task<object> ExecuteScriptAsync(string script)
+    {
+        return Dispatcher.InvokeAsync(async () =>
+        {
+            if (WebView.CoreWebView2 is null)
+                return (object)new { error = "WebView no inicializado" };
+            try
+            {
+                var jsonResult = await WebView.CoreWebView2.ExecuteScriptAsync(script);
+                return (object)new { ok = true, result = jsonResult };
+            }
+            catch (Exception ex)
+            {
+                return (object)new { error = ex.Message };
+            }
+        }).Task.Unwrap();
+    }
+
+    private Task<object> SetThemeAsync(string theme)
+    {
+        return Dispatcher.InvokeAsync(() =>
+        {
+            if (theme is "auto" or "dark" or "light")
+            {
+                _themeOverride = theme;
+                ApplySystemTheme();
+                var hwnd = new WindowInteropHelper(this).Handle;
+                var dark = ResolveDark() ? 1 : 0;
+                DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref dark, sizeof(int));
+                return (object)new { ok = true, theme = _themeOverride, effective = ResolveDark() ? "dark" : "light" };
+            }
+            return (object)new { error = "theme debe ser 'auto', 'dark' o 'light'" };
+        }).Task;
     }
 
     private void LoadPosition()
@@ -120,6 +221,7 @@ public partial class MainWindow : Window
 
     private void OnClosing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
+        _api.Stop();
         SavePosition();
     }
 
@@ -183,7 +285,7 @@ public partial class MainWindow : Window
             WebView.CoreWebView2.Settings.IsStatusBarEnabled = false;
 
             // Fondo del WebView (área en blanco antes de cargar) según el tema.
-            WebView.DefaultBackgroundColor = IsDarkMode()
+            WebView.DefaultBackgroundColor = ResolveDark()
                 ? System.Drawing.Color.FromArgb(0xFF, 0x1F, 0x1F, 0x1F)
                 : System.Drawing.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
 

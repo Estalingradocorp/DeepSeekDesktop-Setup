@@ -42,6 +42,34 @@ de abrir el navegador. Usa **WebView2** (ya incluido en Windows 10/11) y es
 
 Ver más opciones de distribución (SMB, script, GPO) en [`DISTRIBUCION.md`](DISTRIBUCION.md).
 
+## API local (para conectar con opencode)
+
+La app levanta un servidor HTTP **solo en localhost** (puerto **8765**, sin token)
+para que opencode u otros agentes puedan controlarla:
+
+```bash
+# Estado actual (URL, tema, override, puerto)
+curl http://localhost:8765/status
+
+# Información de la empresa / app
+curl http://localhost:8765/info
+
+# Navegar a otra URL
+curl -X POST http://localhost:8765/navigate -H "Content-Type: application/json" -d '{"url":"https://chat.deepseek.com/"}'
+
+# Recargar la página
+curl -X POST http://localhost:8765/reload
+
+# Ejecutar JavaScript dentro de la página (devuelve el resultado como JSON)
+curl -X POST http://localhost:8765/execute -H "Content-Type: application/json" -d '{"script":"document.title"}'
+
+# Cambiar tema: auto | dark | light
+curl -X POST http://localhost:8765/theme -H "Content-Type: application/json" -d '{"theme":"dark"}'
+```
+
+Endpoints: `GET /`, `GET /status`, `GET /info`, `POST /reload`, `POST /navigate`,
+`POST /execute`, `POST /theme`. Solo accesible desde la propia máquina (`localhost`).
+
 ## Compilar desde el código fuente
 
 Requisitos previos: SDK de .NET 8 y [Inno Setup 6](https://jrsoftware.org/isinfo.php).
@@ -88,6 +116,7 @@ agalodo/
 ├── App.xaml / App.xaml.cs        # Arranque de la aplicación
 ├── MainWindow.xaml(.cs)          # Ventana principal + menú + WebView2
 ├── AboutWindow.xaml(.cs)         # Ventana "Acerca de" (info de la empresa)
+├── LocalApiServer.cs             # API HTTP local para controlar la app desde opencode
 ├── DeepSeekDesktop.csproj        # Proyecto .NET 8 WPF
 ├── installer.iss                 # Script de Inno Setup
 ├── Assets/
