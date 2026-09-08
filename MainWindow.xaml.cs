@@ -60,6 +60,12 @@ public partial class MainWindow : Window
             ? System.Windows.Media.Color.FromRgb(0xE8, 0xEE, 0xF5)
             : System.Windows.Media.Color.FromRgb(0x1A, 0x1F, 0x26);
         Resources["MenuFgBrush"] = new SolidColorBrush(menuFg);
+
+        // Línea divisoria fina bajo el menú (acabado corporativo).
+        var divider = dark
+            ? System.Windows.Media.Color.FromRgb(0x2C, 0x33, 0x3B)
+            : System.Windows.Media.Color.FromRgb(0xE2, 0xE6, 0xEA);
+        Resources["MenuDividerBrush"] = new SolidColorBrush(divider);
     }
 
     private bool ResolveDark() => _themeOverride switch

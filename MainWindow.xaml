@@ -14,20 +14,24 @@
         UseLayoutRounding="True">
     <Window.Resources>
         <SolidColorBrush x:Key="MenuFgBrush" Color="#1A1F26"/>
+        <SolidColorBrush x:Key="MenuDividerBrush" Color="#E2E6EA"/>
     </Window.Resources>
     <DockPanel>
-        <Menu DockPanel.Dock="Top" Background="Transparent" Padding="6,4">
-            <MenuItem Header="Archivo" Foreground="{DynamicResource MenuFgBrush}">
-                <MenuItem Header="Recargar página" Foreground="#1A1F26" Click="Reload_Click"/>
-                <MenuItem Header="Abrir en el navegador" Foreground="#1A1F26" Click="OpenInBrowser_Click"/>
-                <Separator/>
-                <MenuItem Header="Salir" Foreground="#1A1F26" Click="Exit_Click"/>
-            </MenuItem>
-            <MenuItem Header="Ayuda" Foreground="{DynamicResource MenuFgBrush}">
-                <MenuItem Header="Soporte" Foreground="#1A1F26" Click="Support_Click"/>
-                <MenuItem Header="Acerca de Estalingrado Corp" Foreground="#1A1F26" Click="About_Click"/>
-            </MenuItem>
-        </Menu>
+        <Border DockPanel.Dock="Top" Background="Transparent"
+                BorderBrush="{DynamicResource MenuDividerBrush}" BorderThickness="0,0,0,1">
+            <Menu Background="Transparent" Padding="6,4">
+                <MenuItem Header="Archivo" Foreground="{DynamicResource MenuFgBrush}">
+                    <MenuItem Header="Recargar página" Foreground="#1A1F26" Click="Reload_Click"/>
+                    <MenuItem Header="Abrir en el navegador" Foreground="#1A1F26" Click="OpenInBrowser_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Salir" Foreground="#1A1F26" Click="Exit_Click"/>
+                </MenuItem>
+                <MenuItem Header="Ayuda" Foreground="{DynamicResource MenuFgBrush}">
+                    <MenuItem Header="Soporte" Foreground="#1A1F26" Click="Support_Click"/>
+                    <MenuItem Header="Acerca de Estalingrado Corp" Foreground="#1A1F26" Click="About_Click"/>
+                </MenuItem>
+            </Menu>
+        </Border>
         <wv2:WebView2 x:Name="WebView"
                        Source="https://chat.deepseek.com/"
                        CoreWebView2InitializationCompleted="WebView_InitializationCompleted" />
