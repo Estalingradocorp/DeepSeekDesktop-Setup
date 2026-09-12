@@ -49,4 +49,36 @@ public partial class AboutWindow : Window
     {
         Close();
     }
+
+    private static void OpenUrl(string url)
+    {
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
+            // no hacer nada si falla
+        }
+    }
+
+    private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+    {
+        OpenUrl(e.Uri.ToString());
+        e.Handled = true;
+    }
+
+    private void Website_Click(object sender, RoutedEventArgs e)
+    {
+        OpenUrl("https://estalingradocorp.qzz.io/");
+    }
+
+    private void Support_Click(object sender, RoutedEventArgs e)
+    {
+        OpenUrl("https://estalingradocorp.github.io/EstalingradoCorp/");
+    }
 }
