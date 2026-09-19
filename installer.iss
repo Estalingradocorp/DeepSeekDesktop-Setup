@@ -1,6 +1,6 @@
 ; DeepSeek Desktop installer
 #define MyAppName "DeepSeek Desktop"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.2"
 #define MyAppPublisher "DeepSeek"
 #define MyAppExeName "DeepSeekDesktop.exe"
 #define MyAppUrl "https://chat.deepseek.com/"
@@ -20,6 +20,8 @@ Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
 SetupIconFile=Assets\deepseek.ico
+WizardImageFile=Assets\wizard-image.bmp
+LicenseFile=LICENSE.rtf
 UninstallDisplayIcon={app}\{#MyAppExeName}
 ArchitecturesInstallIn64BitMode=x64compatible
 PrivilegesRequired=lowest
