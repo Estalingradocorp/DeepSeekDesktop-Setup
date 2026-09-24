@@ -11,8 +11,6 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
-    env:
-      HAS_SIGNPATH: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
 
     steps:
       - name: Checkout
@@ -44,33 +42,53 @@ jobs:
 
       # Firma de codigo gratuita para open source via SignPath Foundation.
       # Requiere que el repo sea publico y tenga licencia OSS (LICENSE).
-      # Configura los secretos/variables en Settings > Secrets y variables > Actions:
-      #   - Secret:  SIGNPATH_API_TOKEN
-      #   - Variable: SIGNPATH_ORG_ID      (slug de la organizacion)
-      #   - Variable: SIGNPATH_PROJECT_ID  (slug del proyecto)
-      #   - Variable: SIGNPATH_POLICY_ID   (slug de la politica de firma)
+      # Configura en Settings > Secrets and variables > Actions:
+      #   - Secret:    SIGNPATH_API_TOKEN
+      #   - Variables: SIGNPATH_ORG_ID, SIGNPATH_PROJECT_ID, SIGNPATH_POLICY_ID (slugs)
+      - name: Upload unsigned installer
+        uses: actions/upload-artifact@v4
+        id: upload-contract
+        with:
+          name: installer-unsigned
+          path: DeepSeekDesktop-Setup.exe
+
       - name: Sign installer with SignPath
-        if: ${{ env.HAS_SIGNPATH == 'true' }}
-        uses: signpath/submit-signing-request@v1.0.1
+        if: ${{ env.SIGN_ENABLED == 'true' }}
+        env:
+          SIGN_ENABLED: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
+        uses: signpath/github-action-submit-signing-request@v3
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
           organization-id: ${{ vars.SIGNPATH_ORG_ID }}
           project-slug: ${{ vars.SIGNPATH_PROJECT_ID }}
           signing-policy-slug: ${{ vars.SIGNPATH_POLICY_ID }}
-          input-artifact-path: DeepSeekDesktop-Setup.exe
-          output-artifact-path: DeepSeekDesktop-Setup.exe
-          wait-for-processing: true
+          github-artifact-id: ${{ steps.upload-contract.outputs.artifact-id }}
+          output-artifact-directory: signed
+          wait-for-completion: true
+
+      - name: Replace with signed installer
+        if: ${{ env.SIGN_ENABLED == 'true' }}
+        shell: powershell
+        env:
+          SIGN_ENABLED: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
+        run: |
+          $signed = Get-ChildItem -Recurse -Filter "DeepSeekDesktop-Setup.exe" -Path "signed" | Select-Object -First 1
+          Copy-Item $signed.FullName -Destination "DeepSeekDesktop-Setup.exe" -Force
+          Write-Host "Usando instalador firmado: $($signed.FullName)"
 
       - name: Verify installer signature
-        if: ${{ env.HAS_SIGNPATH == 'true' }}
+        if: ${{ env.SIGN_ENABLED == 'true' }}
         shell: powershell
+        env:
+          SIGN_ENABLED: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
         run: |
           $sig = Get-AuthenticodeSignature -FilePath "DeepSeekDesktop-Setup.exe"
           Write-Host "Signature status: $($sig.Status)"
-          if ($sig.Status -ne "Valid" -and $sig.Status -ne "UnknownError") {
-            Write-Host "Instalador NO firmado. Comprueba los secretos de SignPath."
+          if ($sig.Status -ne "Valid") {
+            Write-Host "Instalador NO firmado correctamente. Comprueba SignPath."
             exit 1
           }
+          Write-Host "Instalador firmado OK."
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
