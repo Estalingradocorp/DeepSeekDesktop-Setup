@@ -11,6 +11,8 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      HAS_SIGNPATH: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
 
     steps:
       - name: Checkout
@@ -48,7 +50,7 @@ jobs:
       #   - Variable: SIGNPATH_PROJECT_ID  (slug del proyecto)
       #   - Variable: SIGNPATH_POLICY_ID   (slug de la politica de firma)
       - name: Sign installer with SignPath
-        if: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
+        if: ${{ env.HAS_SIGNPATH == 'true' }}
         uses: signpath/submit-signing-request@v1.0.1
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
@@ -60,7 +62,7 @@ jobs:
           wait-for-processing: true
 
       - name: Verify installer signature
-        if: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
+        if: ${{ env.HAS_SIGNPATH == 'true' }}
         shell: powershell
         run: |
           $sig = Get-AuthenticodeSignature -FilePath "DeepSeekDesktop-Setup.exe"
