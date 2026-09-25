@@ -107,7 +107,8 @@ distribuir a los equipos.
 |---|---|---|
 | `v1.0.0` | Versión inicial: WebView2, menú, tema claro/oscuro, persistencia de ventana, instalador Inno Setup. | [DeepSeekDesktop-Setup.exe](https://github.com/Estalingradocorp/DeepSeekDesktop-Setup/releases/download/v1.0.0/DeepSeekDesktop-Setup.exe) |
 | `v1.0.1` | Visibilidad del menú en modo oscuro. | [DeepSeekDesktop-Setup.exe](https://github.com/Estalingradocorp/DeepSeekDesktop-Setup/releases/download/v1.0.1/DeepSeekDesktop-Setup.exe) |
-| `v1.0.2` | **Actual:** solo el color de las letras del menú sigue el tema; los desplegables mantienen su estilo nativo. | [DeepSeekDesktop-Setup.exe](https://github.com/Estalingradocorp/DeepSeekDesktop-Setup/releases/download/v1.0.2/DeepSeekDesktop-Setup.exe) |
+| `v1.0.2` | Solo el color de las letras del menú sigue el tema; los desplegables mantienen su estilo nativo. | [DeepSeekDesktop-Setup.exe](https://github.com/Estalingradocorp/DeepSeekDesktop-Setup/releases/download/v1.0.2/DeepSeekDesktop-Setup.exe) |
+| `v1.0.3` | **Actual:** ventana "Acerca de" profesional con enlaces a web y soporte, aspecto corporativo, API local (localhost:8765), soporte firma SignPath. | [DeepSeekDesktop-Setup.exe](https://github.com/Estalingradocorp/DeepSeekDesktop-Setup/releases/download/v1.0.3/DeepSeekDesktop-Setup.exe) |
 
 ## Estructura del proyecto
 
