@@ -5,6 +5,12 @@ Aplicación de escritorio para Windows de **Estalingrado Corp** que abre
 de abrir el navegador. Usa **WebView2** (ya incluido en Windows 10/11) y es
 **autocontenida** (no requiere .NET instalado en el equipo destino).
 
+## Captura de la aplicación
+
+![DeepSeek Desktop](capturas/screenshot.png)
+
+*Ventana principal con el menú corporativo integrado y chat.deepseek.com cargado.*
+
 ## Características
 
 - Ventana nativa de Windows con el icono de DeepSeek.
